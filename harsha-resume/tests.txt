@@ -1,0 +1,717 @@
+
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image, Button } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import OrderDetailsSection from '../../components/orderDetailsSection';
+import OrderDetailsChef from '../../components/OrderDetailsChef';
+import OrderDetailsTabs from '../../components/OrderDetailsTabs';
+import { ScrollView, TextInput, TouchableHighlight, ImageBackground, KeyboardAvoidingView } from 'react-native';
+import { BASE_URL, ORDERLIST_ENDPOINT } from '../../utils/ApiConstants';
+
+
+const OrderDetails = ({ navigation }) => {
+    let base_url = 'https://horaservices.com:3000'
+    const [orderDetail, setOrderDetail] = useState({})
+    const getOrderId = async () => {
+        const orderId = await AsyncStorage.getItem("orderId")
+        console.log(orderId)
+    }
+    const handleRating = () => {
+        console.log("handleRating")
+    }
+
+    useEffect(() => {
+        fetchOrderDetails()
+        // getOrderId()
+    }, [])
+
+    async function fetchOrderDetails() {
+        try {
+            const response = await fetch(base_url + '/api/order/order_details/v1/645e2485cda2cca13ca86464');
+            const responseData = await response.json();
+            console.log("orderDetail" + responseData)
+            setOrderDetail(responseData.data)
+            console.log("orderDetail" + orderDetail)
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
+
+    async function cancelOrder (){
+        try {
+            const response = await fetch(base_url + '/api/order/cancelOrder', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    _id:"64627058b3592591716bd1c0",
+                    Authorisation: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDEzMzQwZjU0OWI1OGUzZGMzOWEwMzUiLCJuYW1lIjoiUmFodWwiLCJlbWFpbCI6IiIsInBob25lIjoiODM4Nzk5OTM4MiIsInJvbGUiOiJzdXBwbGllciIsImlhdCI6MTY3ODk4NDg3OSwiZXhwIjoxNzEwNTIwODc5fQ.PEnGF12sAFsF_idngQZnGR_eSLYweXCOPsq7iTJUMoc"
+                })
+            }); // Replace with your API endpoint for updating user profile
+
+            // Handle success response
+            console.log('Order cancelled successfully');
+        } catch (error) {
+            // Handle error response
+            console.log('Error updating profile:', error);
+        }
+    }
+
+    
+
+
+
+    return (
+        <View style={styles.container}>
+            <OrderDetailsSection OrderDetail={orderDetail} />
+            <View style={styles.innercontainer}>
+                <OrderDetailsChef OrderDetail={orderDetail} />
+                <OrderDetailsTabs OrderDetail={orderDetail} />
+            </View>
+            {
+                orderDetail.order_status == '4' ?
+                    <View>
+                        <TouchableHighlight style={styles.ratingbutton} onPress={handleRating} underlayColor="#E56352">
+                            <Text style={styles.ratingbuttonText}>Rate Us</Text>
+                        </TouchableHighlight>
+                    </View> : null
+            }
+             { orderDetail.order_status == '4' ? '' :
+            <View>
+               <TouchableHighlight style={styles.ratingbutton} onPress={handleRating} underlayColor="#E56352">
+                   <Text style={styles.ratingbuttonText}>Share Menu with Guest</Text>
+               </TouchableHighlight>
+               <TouchableHighlight style={styles.cancelbutton} onPress={cancelOrder} underlayColor="#E56352">
+                   <Text style={styles.cancelbuttonText}>Cancel Order</Text>
+               </TouchableHighlight>
+           </View>  
+            } 
+            { orderDetail.order_status == '4' ? '' :
+            <View  style={styles.cancelorderbox}>
+               <Text>
+                <p  style={styles.cancelorderboxtext1}>We Regret to inform you that your order has been canceled!
+                we are working hard to make your experience better and hustle free</p>
+                <p  style={styles.cancelorderboxtext2}>Contact us for more help!</p>
+               </Text>
+           </View>  
+            } 
+
+
+        </View>
+    )
+
+}
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: "#F2F2F2",
+    },
+    innercontainer: {
+        paddingLeft: "15px",
+        paddingRight: "15px"
+    },
+    ratingbutton: {
+        height: 47,
+        backgroundColor: '#9252AA',
+        marginHorizontal: 31,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 15,
+        marginBottom: "20px",
+        width: "88%",
+        marginTop: "15px",
+        marginBottom: "10px",
+        marginLeft: "auto",
+        marginRight: "auto"
+    },
+    cancelbutton:{
+        height: 47,
+        backgroundColor: '#fff',
+        border:"1px solid #9252AA",
+        marginHorizontal: 31,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 15,
+        marginBottom: "10px",
+        width: "88%",
+        marginTop: "1px",
+        marginBottom: "20px",
+        marginLeft: "auto",
+        marginRight: "auto"
+    },
+    cancelbuttonText:{
+        textAlign: 'center', // Center the text horizontally
+        color: '#9252AA',
+        fontSize: 18,
+        fontWeight: '500'
+    },
+    ratingbuttonText: {
+        textAlign: 'center', // Center the text horizontally
+        color: 'white',
+        fontSize: 18,
+        fontWeight: '500'
+    },
+    cancelorderbox:{
+    border: "1px solid #F15252",
+    backgroundColor: "#FFA4A4",
+    width: "87%",
+    marginTop: 0,
+    marginBottom:0,
+    marginLeft:'auto',
+    marginRight:'auto',
+    paddingTop:0,
+    paddingBottom:0,
+    paddingLeft:"20px",
+    paddingRight: "20px" ,
+    marginBottom:"20px"
+},
+cancelorderboxtext1:{
+    fontWeight: 500,
+    marginBottom:0
+},
+cancelorderboxtext2:{
+    fontWeight: 500,
+    color:"#FF2929",
+    textAlign:"center",
+    marginTop:0,
+    marginBottom:11
+}
+})
+
+
+export default OrderDetails;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ const GetOrderDetailsMenu = ({ OrderDetailselcted }) => {
+
+        return (
+            <View>
+                <View style={{ flex: 1, backgroundColor: '#fff', paddingLeft: 15, paddingRight: 15 }}>
+                    {/* <Text>{OrderDetailselcted}</Text> */}
+
+                     {
+                        Object.values(OrderDetailselcted).map((item)=>{
+                        return(
+                        <View>
+                        {item}
+                        </View>
+                        )
+                        })
+                        }  
+                        
+                </View>
+            </View>
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ // <View style={{ flex: 1, backgroundColor: '#fff', paddingLeft: "15px", paddingRight: "15px" }}>
+    //   {Object.values(orderMenu).map((item, index) => (
+    //     <View key={index}>
+          
+    //       <Text>Name: {item.name}</Text>
+    //             {
+    //             Object.keys(item.mealId).map((cur , index1)=>{
+    //               <View key={index1}>
+    //                 <Text>{<Text>{cur.name}</Text>}</Text>
+    //               </View>
+    //             })
+    //             }
+    //     </View>
+    //   ))}
+      {/* <View>
+        <Text style={{ fontSize: "16px", fontWeight: "600", paddingTop: "10px", paddingBottom: "0px" }}>Appetizer(20)</Text>
+        <ul style={styles.ulclass}>
+          <li style={styles.liclass}>
+            <View>
+              <Image source={require('../assets/daal.png')} style={{
+                height: 30,
+                width: 30,
+                marginLeft: 15,
+                marginVertical: 46,
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0
+              }} />
+            </View>
+            <View>
+              <View><Text style={{ color: "#414141", fontWeight: "600", textAlign: "right", fontSize: "12px" }}>Daal Tadka </Text></View>
+              <View><Text style={{ color: "#9252AA", fontWeight: "600", textAlign: "right" }}>"₹" 199</Text></View>
+            </View>
+          </li>
+          <li style={styles.liclass}>
+            <span>
+              <Image source={require('../assets/daal.png')} style={{
+                height: 30,
+                width: 30,
+                marginLeft: 15,
+                marginVertical: 46,
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0
+              }} />
+            </span>
+            <span>
+              <View><Text style={{ color: '#414141', fontSize: "12px", fontWeight: "600" }}>Daal Tadka </Text></View>
+              <View><Text style={{ color: "#9252AA", fontWeight: "600", textAlign: "right" }}>"₹" 199</Text></View>
+            </span>
+          </li>
+          <li style={styles.liclass}>
+            <span>
+              <Image source={require('../assets/daal.png')} style={{
+                height: 30,
+                width: 30,
+                marginLeft: 15,
+                marginVertical: 46,
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0
+              }} />
+            </span>
+            <span>
+              <View><Text style={{ color: '#414141', fontSize: "12px", fontWeight: "600" }}>Daal Tadka </Text></View>
+              <View><Text style={{ color: "#9252AA", fontWeight: "600", textAlign: "right" }}>"₹" 199</Text></View>
+            </span>
+          </li>
+          <li style={styles.liclass}>
+            <span>
+              <Image source={require('../assets/daal.png')} style={{
+                height: 30,
+                width: 30,
+                marginLeft: 15,
+                marginVertical: 46,
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0
+              }} />
+            </span>
+            <span>
+              <View><Text style={{ color: '#414141', fontSize: "12px", fontWeight: "600" }}>Daal Tadka </Text></View>
+              <View><Text style={{ color: "#9252AA", fontWeight: "600", textAlign: "right" }}>"₹" 199</Text></View>
+            </span>
+          </li>
+          <li style={styles.liclass}>
+            <span>
+              <Image source={require('../assets/daal.png')} style={{
+                height: 30,
+                width: 30,
+                marginLeft: 15,
+                marginVertical: 46,
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0
+              }} />
+            </span>
+            <span>
+              <View><Text style={{ color: '#414141', fontSize: "12px", fontWeight: "600" }}>Daal Tadka </Text></View>
+              <View><Text style={{ color: "#9252AA", fontWeight: "600", textAlign: "right" }}>"₹" 199</Text></View>
+            </span>
+          </li>
+          <li style={styles.liclass}>
+            <span>
+              <Image source={require('../assets/daal.png')} style={{
+                height: 30,
+                width: 30,
+                marginLeft: 15,
+                marginVertical: 46,
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0
+              }} />
+            </span>
+            <span>
+              <View><Text style={{ color: '#414141', fontSize: "12px", fontWeight: "600" }}>Daal Tadka </Text></View>
+              <View><Text style={{ color: "#9252AA", fontWeight: "600", textAlign: "right" }}>"₹" 199</Text></View>
+            </span>
+          </li>
+          <li style={styles.liclass}>
+            <span>
+              <Image source={require('../assets/daal.png')} style={{
+                height: 30,
+                width: 30,
+                marginLeft: 15,
+                marginVertical: 46,
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0
+              }} />
+            </span>
+            <span>
+              <View><Text style={{ color: '#414141', fontSize: "12px", fontWeight: "600" }}>Daal Tadka </Text></View>
+              <View><Text style={{ color: "#9252AA", fontWeight: "600", textAlign: "right" }}>"₹" 199</Text></View>
+            </span>
+          </li>
+        </ul>
+      </View> */}
+    // </View>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, Image, Button } from 'react-native';
+
+
+const OrderDetailsMenu = ({ OrderId }) => {
+  // console.log("serc1" + JSON.stringify(OrderDetail))
+  let base_url = 'https://horaservices.com:3000'
+  const [orderMenu, setOrderMenu] = useState([]);
+
+  useEffect(() => {
+    fetchOrderDetails()
+    // getOrderId()
+  }, [])
+
+  async function fetchOrderDetails() {
+    console.log("orderMenu")
+
+    try {
+      const response = await fetch(base_url + '/api/order/order_details/v1/645e2485cda2cca13ca86464');
+      const responseData = await response.json();
+      console.log("orderMenu1" + responseData)
+      setOrderMenu(responseData.data.selecteditems)
+      console.log("orderMenu inner" + orderMenu)
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  // OrderDetail.forEach((index)=>{
+  //   console.log(index)
+  //  })
+
+
+  // useEffect(() => {
+  //   itemkey.map((item) => {
+  //     return (
+  //       <View>
+  //         {item}
+  //       </View>
+  //     )
+  //   })
+  // }, [itemkey])
+
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#fff', paddingLeft: 15, paddingRight: 15 }}>
+      {orderMenu.map((item, index) => (
+        <View key={index}>
+          <Text>Name: {item.name}</Text>
+          {Object.values(item.mealId).map((cur, index1) => (
+            <View key={index1}>
+              <Text>{cur.name}</Text>
+            </View>
+          ))}
+        </View>
+      ))}
+    </View>
+   
+  )
+}
+
+const styles = StyleSheet.create({
+  ulclass: {
+    color: "#9252AA",
+    fontWeight: "600",
+    paddingBottom: 0,
+    paddingTop: 0,
+    paddingLeft: 0,
+    paddingRight: 0,
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  liclass: {
+    listStyle: "none",
+    border: "1px solid #B8B8B8",
+    marginBottom: "6px",
+    marginRight: "6px",
+    display: "flex",
+    borderRadius: "10px",
+    justifyContent: 'space-between',
+    alignItems: "center",
+    paddingTop: "8px",
+    paddingBottom: "8px",
+    paddingRight: "8px",
+    paddingLeft: "8px"
+  }
+})
+
+
+export default OrderDetailsMenu;
+
+
+
+style="position: relative;"
+
+767
+.slide-text h2, .slide-text h3 {
+    font-size: 42px;
+    font-size: 2.625rem;
+}
+
+
+
+background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 2;
+    opacity: 1 !important;
+
+
+
+height: 660px;
+    position: relative;
+
+
+style="background-image: url(content/img/slides/slide_home_1.jpg); 
+background-size: contain; background-size: 100%; background-position: center center"
+
+
+.opacity-mask {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    z-index: 2;
+    transform: translateY(0, -50%);
+}
+
+background-image: url(content/img/slides/slide_home_1.jpg); background-size: contain; 
+background-size: 100%; background-position: center center
+
+
+
+
+mobile:
+    background-image: url(content/img/slides/slide_home_1.jpg);
+    background-size: contain;
+    background-size: 100% 460px;
+    background-position: right;
+    background-repeat: no-repeat;
+
+.homebanner {
+    height: 460px;
+    width: 100%;
+}
+
+}
+
+
+
+
+import React, { FC, useEffect, ReactElement, useState } from 'react';
+import Popup from '../../utility/add-user-popup';
+
+const IdentityManageAccess: FC = () => {
+
+    const [data, setData] = useState([
+        {
+            name: "Paul Bantick0",
+            email: "Paul.bantick0@beazley.com",
+            state: "active"
+        },
+        {
+            name: "Paul Bantick1",
+            email: "Paul.bantick1@beazley.com",
+            state: "invited"
+        },
+        {
+            name: "Paul Bantick2",
+            email: "Paul.bantick2@beazley.com",
+            state: "active"
+        },
+        {
+            name: "Paul Bantick3",
+            email: "Paul.bantick3@beazley.com",
+            state: "invited"
+        },
+        {
+            name: "Paul Bantick4",
+            email: "Paul.bantick4@beazley.com",
+            state: "active"
+        },
+        {
+            name: "Paul Bantick4",
+            email: "Paul.bantick4@beazley.com",
+            state: "active"
+        },
+    ]);
+
+    const [showPopup, setShowPopup] = useState(false);
+
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    };
+
+    return (
+        <>
+            <div className="pl-4 pr-4 identity-container">
+                <div className="w-100 d-flex align-items-center justify-space-between" style={{ margin: "0 0 30px 0" }}>
+                    <h3 style={{ color: "rgba(220, 25, 155, 1)" }}>Beazley Accounts for {'<Organization>'}</h3>
+                    <button className='add-user-btn' onClick={togglePopup}><span style={{ marginRight: "10px" }}>+</span><span>{"Add User"}</span></button>
+                    {/* Pass the showPopup state to the Popup component */}
+                    <Popup show={showPopup} handleClose={togglePopup}>
+                    </Popup>
+                </div>
+                <table style={{ width: '100%' }}>
+                    <thead style={{ marginBottom: '10px' }}>
+                        <tr>
+                            <th style={{ width: '22%', textAlign: 'left' }}>Name</th>
+                            <th style={{ width: '40%', textAlign: 'left' }}>Email</th>
+                            <th style={{ width: '12%', textAlign: 'left' }}>State</th>
+                            <th style={{ width: '11%', textAlign: 'right' }}>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            data.map((item, index) => {
+                                return (
+                                    <tr
+                                        key={index}
+                                        className='manageaccess-table'
+                                    >
+                                        <td>{item.name}</td>
+                                        <td>{item.email}</td>
+                                        <td className={item.state} style={{ margin: "8px 0 0" }}>{item.state}</td>
+                                        <td style={{ textAlign: 'right' }}>
+                                            {<img className='icon-inicator' src='/image/vector-delete.svg' alt='' style={{ height: "17px;" }} />}
+                                        </td>
+                                    </tr>
+                                )
+                            })
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </>
+    )
+};
+
+export default IdentityManageAccess;
+
+
+
+
+
+
+
+
+}

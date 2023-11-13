@@ -1,0 +1,127 @@
+.box-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /*height: 575px;*/
+    list-style-type: none;
+    padding: 0px;
+    margin: 0;
+}
+
+.boxa {
+    flex: 0 0 50%;
+    width: 50%;
+    background: red url(../img/bg-14.jpg) center center no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #fff;
+    position:relative
+}
+
+.boxb {
+    background: lightgreen url(../img/bg-16.jpg) center center no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #fff;
+}
+
+.boxc {
+    background: orange url(../img/bg-15.jpg) center center no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #fff;
+}
+
+.boxb,
+.boxc {
+    flex: 0 0 50%;
+    width: 50%;
+}
+
+.boxb > div {
+    width: 100%;
+    height: 100%;
+}
+
+.w-content {
+    color: #b9b9b9;
+    text-align: center;
+    padding: 50px; 
+}
+
+    .w-content h3 {
+        color: #fff;
+    }
+
+    @media (max-width: 767px) {
+        .box-wrapper {
+            height: auto;
+            flex-direction: column;
+        }
+    .boxa, .boxb, .boxc {
+        width: 100%;
+        min-height:250px;
+    }
+
+        .cl_counter, .cl_counter1 {
+            width: 140px !important;
+        }
+
+        .mainPg .box_how {
+            width: 100% !important;
+            border-radius: 0px !important;
+        }
+
+            .mainPg .box_how:last-child {
+                float: none !important;
+            }
+}
+
+.mainPg .box_how {
+    width: 80%;
+    border-radius: 15px;
+}
+
+    .mainPg .box_how:last-child {
+        float: right;
+    }
+
+.counter_box {
+    /* display: block; */
+    /* flex-direction: row; */
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+}
+
+.cl_counter, .cl_counter1 {
+    display: inline-block;
+    width: 180px;
+    background-color: rgba(0,0,0,0.8);
+    border-radius: 15px 15px 0 0;
+    padding: 15px 15px 0;
+    color: white;
+    font-weight: 600;
+}
+
+    .cl_counter h4 {
+        color: #fff;
+        margin-bottom: 0;
+    }
+
+    .fab, .far {
+        font-weight: 400;
+        font-size: 25px;
+        margin: 6px 0;
+    }
